@@ -7,6 +7,7 @@
         "esModuleInterop": true,
         "strict": true,
         "baseUrl": ".",
+        "skipLibCheck": true,
         "paths": {
             "@/*": [
                 "src/*"
@@ -15,5 +16,8 @@
     },
     "include": [
         "src/**/*"
+    ],
+    "exclude": [
+        "src/diag.ts"
     ]
 }
