@@ -1,0 +1,13 @@
+backend/
+node_modules/
+.next/
+out/
+build/
+dist/
+*.log
+.gemini/
+brain/
+tmp/
+uploads/
+diag_results.json
+diag_output.txt
