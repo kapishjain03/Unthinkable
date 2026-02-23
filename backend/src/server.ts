@@ -17,7 +17,15 @@ dotenv.config();
 const app = express();
 
 // --- Middleware ---
-app.use(cors());
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production'
+        ? [process.env.FRONTEND_URL || '*']
+        : '*',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -142,10 +150,10 @@ app.post("/api/analyze", async (req: Request, res: Response) => {
     }
 });
 
-// --- Startup with Port Fallback ---
-const DEFAULT_PORT = parseInt(process.env.PORT || "3001");
+// --- Startup ---
+const PORT = process.env.PORT || 3001;
 
-const startServer = (port: number) => {
+const startServer = (port: string | number) => {
     const server = app.listen(port, () => {
         console.log(`\n🚀 Social Media Analyzer Backend started!`);
         console.log(`📍 Health Check: http://localhost:${port}/health`);
@@ -157,14 +165,9 @@ const startServer = (port: number) => {
     });
 
     server.on("error", (err: any) => {
-        if (err.code === "EADDRINUSE") {
-            console.warn(`⚠️ Port ${port} is in use. Trying port ${port + 1}...`);
-            startServer(port + 1);
-        } else {
-            console.error("Server startup error:", err);
-            process.exit(1);
-        }
+        console.error("Server startup error:", err);
+        process.exit(1);
     });
 };
 
-startServer(DEFAULT_PORT);
+startServer(PORT);
