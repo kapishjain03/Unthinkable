@@ -1,3 +1,6 @@
+// Supported file types for the platform
+export type SupportedFileType = "application/pdf" | "image/jpeg" | "image/png";
+
 // Image classification result
 export interface ClassificationResult {
     is_social_post: boolean;
