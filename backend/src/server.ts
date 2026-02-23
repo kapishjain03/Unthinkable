@@ -18,11 +18,23 @@ const app = express();
 
 // --- Middleware ---
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production'
-        ? [process.env.FRONTEND_URL || '*']
-        : '*',
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        const allowed = [
+            "https://smcanalyzer.vercel.app",
+            process.env.FRONTEND_URL,
+            "http://localhost:3000"
+        ].filter(Boolean);
+
+        if (!origin || allowed.includes(origin) || process.env.NODE_ENV !== 'production') {
+            callback(null, true);
+        } else {
+            console.warn(`CORS blocked for origin: ${origin}`);
+            callback(null, false); // Block other origins gracefully
+        }
+    },
     methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 };
 
 app.use(cors(corsOptions));
